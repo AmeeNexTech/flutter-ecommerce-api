@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->string('otp');
-            $table->timestamp('otp_expires_at')->nullable();
-            $table->timestamp('created_at')->nullable();
+                $table->timestamps();
         });
     }
 
