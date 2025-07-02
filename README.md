@@ -1,61 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛒 E-commerce Backend (Laravel 12)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project is the backend foundation for building a professional e-commerce platform using Laravel 12, featuring secure token-based authentication with Laravel Sanctum.
 
-## About Laravel
+The goal is to develop a solid user management system that integrates seamlessly with a modern frontend, while being extendable for managing products and commercial features in future phases.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✅ Completed Features (Part 1)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🔐 Login and Logout
+- Endpoints:
+  - `POST /api/auth/login`
+  - `POST /api/auth/logout`
+- Authentication is handled via **Sanctum** using secure API tokens for each session.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🧾 User Registration
+- `POST /api/auth/register`
+- Includes OTP verification to confirm user identity.
+- Related endpoints:
+  - `POST /api/auth/verify-registration-otp`
+  - `POST /api/auth/resend-otp`
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🔄 Password Reset Flow
+- A secure flow using OTP to recover accounts:
+  - `POST /api/auth/forgot-password`
+  - `POST /api/auth/verify-reset-otp`
+  - `POST /api/auth/reset-password`
+  - `POST /api/auth/resend-reset-otp`
+- Supports storing the email and OTP temporarily in frontend for smooth UX within OTP validity duration.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 🗑️ Delete Account
+- `POST /api/auth/delete-account`
+- Requires password confirmation before permanently deleting the account and invalidating all tokens.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🚀 Future Plans
 
-## Contributing
+### 🛍️ Product Management (Part 2)
+A full-featured module for adding, editing, and displaying products will be developed in the next phase, with elegant UI/UX.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 🖥️ Frontend Integration
+Build a modern dynamic Flutter frontend app, featuring:
+- Real-time validation
+- Smart state management
+- Smooth and responsive navigation
 
-## Code of Conduct
+### 🛠️ Additional Features (Upcoming)
+- User profile update
+- Detailed account view
+- Notifications and alerts
+- Role-based access (Admin/User)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## ⚙️ Installation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Install dependencies
+composer install
 
-## License
+# Set up the database
+php artisan migrate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Run the development server
+php artisan serve
+```
+
+---
+
+## 🤝 Contribution
+
+Contributions are welcome!  
+Feel free to open an issue or submit a pull request to enhance the project.
+
+---
+
+## 📄 License
+
+This project is open-source and available for use under a suitable license (to be determined).
