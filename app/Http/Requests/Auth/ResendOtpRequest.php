@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,9 +21,9 @@ class ResendOtpRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'البريد الإلكتروني مطلوب.',
-            'email.email' => 'البريد الإلكتروني غير صالح.',
-            'email.exists' => 'البريد الإلكتروني غير موجود في قاعدة البيانات.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Email is invalid.',
+            'email.exists' => 'Email is not found in the database.',
         ];
     }
 }

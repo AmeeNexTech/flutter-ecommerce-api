@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -32,15 +32,15 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'الاسم مطلوب',
-            'email.required' => 'البريد الإلكتروني مطلوب',
-            'email.email' => 'البريد الإلكتروني غير صالح',
-            'email.unique' => 'البريد الإلكتروني مستخدم بالفعل',
-            'phone_number.required' => 'رقم الهاتف مطلوب',
-            'phone_number.unique' => 'رقم الهاتف مستخدم بالفعل',
-            'password.required' => 'كلمة المرور مطلوبة',
-            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
-            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+            'name.required' => 'Name is required.',
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Email address is invalid.',
+            'email.unique' => 'Email address is already in use.',
+            'phone_number.required' => 'Phone number is required.',
+            'phone_number.unique' => 'Phone number is already in use.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
         ];
     }
 }
