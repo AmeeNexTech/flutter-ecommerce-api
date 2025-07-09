@@ -1,87 +1,68 @@
-# 🛒 E-commerce Backend (Laravel 12)
+# 🛒 Shoporia E-commerce API
 
-This project is the backend foundation for building a professional e-commerce platform using Laravel 12, featuring secure token-based authentication with Laravel Sanctum.
+A modern, secure, and high-performance e-commerce backend API built with Laravel 12. This project provides a robust foundation for building scalable e-commerce applications with advanced user management and authentication features.
 
-The goal is to develop a solid user management system that integrates seamlessly with a modern frontend, while being extendable for managing products and commercial features in future phases.
+## ✨ Key Features
 
----
+### 🔐 **Advanced Authentication System**
+- **Secure User Registration** with email verification via OTP
+- **Token-based Authentication** using Laravel Sanctum
+- **Password Reset Flow** with secure OTP verification
+- **Account Management** with secure deletion capabilities
 
-## ✅ Completed Features (Part 1)
+### 🚀 **Performance & Security**
+- **Rate Limiting** to prevent abuse and ensure fair usage
+- **CORS Configuration** for seamless frontend integration
+- **Standardized API Responses** for consistent data formatting
+- **Comprehensive Error Handling** with detailed feedback
+- **Request Validation** with custom validation rules
 
-### 🔐 Login and Logout
-- Endpoints:
-  - `POST /api/auth/login`
-  - `POST /api/auth/logout`
-- Authentication is handled via **Sanctum** using secure API tokens for each session.
+### 📧 **Professional Email System**
+- **Beautiful Email Templates** with modern design
+- **OTP Verification Emails** with security warnings
+- **Password Reset Emails** with step-by-step instructions
+- **Responsive Design** that works on all devices
 
----
+### 🛠️ **Developer Experience**
+- **Health Check Endpoints** for monitoring API status
+- **Comprehensive Logging** for debugging and monitoring
+- **API Documentation Ready** structure
+- **Clean Code Architecture** following Laravel best practices
 
-### 🧾 User Registration
-- `POST /api/auth/register`
-- Includes OTP verification to confirm user identity.
-- Related endpoints:
-  - `POST /api/auth/verify-registration-otp`
-  - `POST /api/auth/resend-otp`
+## 🎯 **Perfect For**
+- E-commerce platforms
+- Mobile applications
+- Web applications
+- Multi-platform solutions
+- Startups and enterprises
 
----
+## 🔧 **Technology Stack**
+- **Laravel 12** - Latest PHP framework
+- **Laravel Sanctum** - API authentication
+- **MySQL/PostgreSQL** - Database support
+- **Mail System** - Professional email delivery
 
-### 🔄 Password Reset Flow
-- A secure flow using OTP to recover accounts:
-  - `POST /api/auth/forgot-password`
-  - `POST /api/auth/verify-reset-otp`
-  - `POST /api/auth/reset-password`
-  - `POST /api/auth/resend-reset-otp`
-- Supports storing the email and OTP temporarily in frontend for smooth UX within OTP validity duration.
+## 📱 **API Endpoints Overview**
 
----
+### Authentication
+- User registration with OTP verification
+- Secure login/logout system
+- Password reset functionality
+- Account management
 
-### 🗑️ Delete Account
-- `POST /api/auth/delete-account`
-- Requires password confirmation before permanently deleting the account and invalidating all tokens.
+### Security Features
+- Rate limiting on sensitive endpoints
+- Token-based authentication
+- Input validation and sanitization
+- Secure password handling
 
----
-
-## 🚀 Future Plans
-
-### 🛍️ Product Management (Part 2)
-A full-featured module for adding, editing, and displaying products will be developed in the next phase, with elegant UI/UX.
-
-### 🖥️ Frontend Integration
-Build a modern dynamic Flutter frontend app, featuring:
-- Real-time validation
-- Smart state management
-- Smooth and responsive navigation
-
-### 🛠️ Additional Features (Upcoming)
-- User profile update
-- Detailed account view
-- Notifications and alerts
-- Role-based access (Admin/User)
-
----
-
-## ⚙️ Installation
-
-```bash
-# Install dependencies
-composer install
-
-# Set up the database
-php artisan migrate
-
-# Run the development server
-php artisan serve
-```
+## 🚀 **Ready for Production**
+This API is production-ready with:
+- Security best practices implemented
+- Performance optimizations
+- Error handling and logging
+- Scalable architecture
 
 ---
 
-## 🤝 Contribution
-
-Contributions are welcome!  
-Feel free to open an issue or submit a pull request to enhance the project.
-
----
-
-## 📄 License
-
-This project is open-source and available for use under a suitable license (to be determined).
+**Built with ❤️ using Laravel 12**

@@ -4,6 +4,7 @@
 
   use App\Http\Controllers\Controller;
   use App\Http\Requests\User\DeleteAccountRequest;
+  use App\Traits\ApiResponse;
   use Illuminate\Http\JsonResponse;
   use Illuminate\Support\Facades\Auth;
   use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,7 @@
 
   class UserController extends Controller
   {
+      use ApiResponse;
       /**
        * حذف حساب المستخدم
        *
@@ -24,18 +26,12 @@
 
           // التحقق من وجود مستخدم مصادق عليه
           if (!$user) {
-              return response()->json([
-                  'status' => 'error',
-                  'message' => 'لا يوجد مستخدم مصادق عليه.',
-              ], 401);
+              return $this->errorResponse('No authenticated user found.', 401);
           }
 
           // التحقق من كلمة المرور
           if (!Hash::check($request->input('password'), (string) $user->password)) {
-              return response()->json([
-                  'status' => 'error',
-                  'message' => 'كلمة المرور غير صحيحة.',
-              ], 422);
+              return $this->errorResponse('Invalid password.', 422);
           }
 
           // بدء معاملة قاعدة البيانات لضمان السلامة
@@ -51,19 +47,12 @@
               // تأكيد المعاملة
               DB::commit();
 
-              return response()->json([
-                  'status' => 'success',
-                  'message' => 'تم حذف الحساب بنجاح.',
-              ], 200);
+              return $this->successMessage('Account deleted successfully.');
           } catch (\Exception $e) {
               // التراجع في حالة الخطأ
               DB::rollBack();
 
-              return response()->json([
-                  'status' => 'error',
-                  'message' => 'فشل في حذف الحساب.',
-                  'error' => $e->getMessage(),
-              ], 500);
+              return $this->serverErrorResponse('Failed to delete account.');
           }
       }
   }

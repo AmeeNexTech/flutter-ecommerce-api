@@ -10,6 +10,7 @@
     use App\Mail\Auth\PasswordResetMail;
     use App\Models\PasswordResetToken;
     use App\Models\User;
+    use App\Traits\ApiResponse;
     use Carbon\Carbon;
     use Illuminate\Http\JsonResponse;
     use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@
 
     class PasswordResetController extends Controller
     {
+        use ApiResponse;
         /**
          * إرسال OTP لإعادة تعيين كلمة المرور
          */
@@ -27,10 +29,10 @@
             $key = 'forgot-password:' . $request->email . '|' . $request->ip();
             if (RateLimiter::tooManyAttempts($key, 3)) {
                 $seconds = RateLimiter::availableIn($key);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => "You have exceeded the maximum number of OTP sending attempts. Try again in $seconds seconds."
-                ], 429);
+                return $this->errorResponse(
+                    "You have exceeded the maximum number of OTP sending attempts. Try again in $seconds seconds.",
+                    429
+                );
             }
 
             $user = User::where('email', $request->email)->first();
@@ -53,22 +55,14 @@
                 RateLimiter::hit($key, 3600);
 
                 DB::commit();
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'OTP sent to your email.',
-                    'data' => [
-                        'email' => $request->email,
-                        'otp_expires_at' => Carbon::now()->addMinutes(3),
-                    ],
-                ], 200);
+                return $this->successResponse([
+                    'email' => $request->email,
+                    'otp_expires_at' => Carbon::now()->addMinutes(3),
+                ], 'OTP sent to your email.');
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error('Failed to send OTP to: ' . $request->email . '. Error: ' . $e->getMessage());
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Failed to send OTP.',
-                    'error' => $e->getMessage(),
-                ], 500);
+                return $this->serverErrorResponse('Failed to send OTP.');
             }
         }
 
@@ -84,19 +78,16 @@
         $key = 'resend-reset-otp:' . $request->email . '|' . $request->ip();
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
-            return response()->json([
-                'status' => 'error',
-                'message' => "You have exceeded the maximum number of OTP sending attempts. Try again in $seconds seconds."
-            ], 429);
+            return $this->errorResponse(
+                "You have exceeded the maximum number of OTP sending attempts. Try again in $seconds seconds.",
+                429
+            );
         }
 
         // التحقق من وجود البريد الإلكتروني في جدول المستخدمين
         $user = User::where('email', $request->email)->first();
         if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'The provided email does not exist in our records.'
-            ], 400);
+            return $this->errorResponse('The provided email does not exist in our records.', 400);
         }
 
         // التحقق مما إذا كان هناك OTP صالح
@@ -105,10 +96,7 @@
             ->first();
 
         if ($existingToken) {
-            return response()->json([
-                'status' => 'error',
-                'message' => ' An active OTP already exists for this email. Please wait until it expires or use the existing OTP.'
-            ], 400);
+            return $this->errorResponse('An active OTP already exists for this email. Please wait until it expires or use the existing OTP.', 400);
         }
 
         // تسجيل محاولة إعادة الإرسال
@@ -131,22 +119,14 @@
             Log::info('Password reset OTP resent successfully to: ' . $request->email);
 
             DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'OTP resent to your email.',
-                'data' => [
-                    'email' => $request->email,
-                    'otp_expires_at' => Carbon::now()->addMinutes(3),
-                ],
-            ], 200);
+            return $this->successResponse([
+                'email' => $request->email,
+                'otp_expires_at' => Carbon::now()->addMinutes(3),
+            ], 'OTP resent to your email.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to resend OTP to: ' . $request->email . '. Error: ' . $e->getMessage());
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while sending the OTP.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->serverErrorResponse('An error occurred while sending the OTP.');
         }
     }
 

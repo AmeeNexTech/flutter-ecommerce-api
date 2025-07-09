@@ -10,6 +10,8 @@
     use App\Models\PendingUser;
     use App\Models\User;
     use App\Models\Otp;
+    use App\Traits\ApiResponse;
+    use App\Http\Resources\UserResource;
     use Illuminate\Http\JsonResponse;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Mail;
@@ -19,6 +21,7 @@
 
     class RegisterController extends Controller
     {
+        use ApiResponse;
         /**
          * إنشاء وإرسال رمز OTP إلى البريد الإلكتروني
          *
@@ -76,21 +79,13 @@
                 $this->generateAndSendOtp($pendingUser);
 
                 DB::commit();
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'A verification code has been sent to your email.',
-                    'data' => [
-                        'email' => $pendingUser->email,
-                        'otp_expires_at' => Carbon::now()->addMinutes(3),
-                    ],
-                ], 201);
+                return $this->successResponse([
+                    'email' => $pendingUser->email,
+                    'otp_expires_at' => Carbon::now()->addMinutes(3),
+                ], 'A verification code has been sent to your email.', 201);
             } catch (\Exception $e) {
                 DB::rollBack();
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'An error occurred while registering.',
-                    'error' => $e->getMessage(),
-                ], 500);
+                return $this->serverErrorResponse('An error occurred while registering.');
             }
         }
 
@@ -106,10 +101,7 @@
             $pendingUser = PendingUser::where('email', $request->email)->first();
 
             if (!$pendingUser) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Invalid email address or user not found.'
-                ], 400);
+                return $this->errorResponse('Invalid email address or user not found.', 400);
             }
 
             // البحث عن OTP في جدول otps
@@ -119,10 +111,7 @@
 
             // التحقق من وجود OTP وصلاحيته
             if (!$otpRecord || Carbon::now()->greaterThan($otpRecord->expires_at)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'OTP code is invalid or expired.'
-                ], 400);
+                return $this->errorResponse('OTP code is invalid or expired.', 400);
             }
 
             // نقل البيانات إلى جدول users
@@ -146,21 +135,13 @@
 
                 DB::commit();
 
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'OTP verified successfully.',
-                    'data' => [
-                        'user' => $user,
-                        'token' => $token
-                    ]
-                ], 200);
+                return $this->successResponse([
+                    'user' => new UserResource($user),
+                    'token' => $token
+                ], 'OTP verified successfully.');
             } catch (\Exception $e) {
                 DB::rollBack();
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'An error occurred while verifying.',
-                    'error' => $e->getMessage(),
-                ], 500);
+                return $this->serverErrorResponse('An error occurred while verifying.');
             }
         }
 
@@ -176,20 +157,17 @@
             $key = 'resend-otp:' . $request->email;
             if (RateLimiter::tooManyAttempts($key, 3)) {
                 $seconds = RateLimiter::availableIn($key);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => "You have exceeded the maximum number of resend attempts. Please try again after $seconds seconds."
-                ], 429);
+                return $this->errorResponse(
+                    "You have exceeded the maximum number of resend attempts. Please try again after $seconds seconds.",
+                    429
+                );
             }
 
             $pendingUser = PendingUser::where('email', $request->email)->first();
 
             // التحقق من وجود المستخدم
             if (!$pendingUser) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Invalid email address or user not found.'
-                ], 400);
+                return $this->errorResponse('Invalid email address or user not found.', 400);
             }
 
             // التحقق مما إذا كان هناك OTP صالح
@@ -198,10 +176,7 @@
                 ->first();
 
             if ($existingOtp) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'The current OTP is still valid. Please wait until it expires.'
-                ], 400);
+                return $this->errorResponse('The current OTP is still valid. Please wait until it expires.', 400);
             }
 
             // تسجيل محاولة إعادة الإرسال
@@ -210,20 +185,12 @@
             // إنشاء وإرسال OTP جديد
             try {
                 $this->generateAndSendOtp($pendingUser);
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'A new OTP has been sent to your email.',
-                    'data' => [
-                        'email' => $pendingUser->email,
-                        'otp_expires_at' => Carbon::now()->addMinutes(3),
-                    ],
-                ], 200);
+                return $this->successResponse([
+                    'email' => $pendingUser->email,
+                    'otp_expires_at' => Carbon::now()->addMinutes(3),
+                ], 'A new OTP has been sent to your email.');
             } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'An error occurred while sending OTP.',
-                    'error' => $e->getMessage(),
-                ], 500);
+                return $this->serverErrorResponse('An error occurred while sending OTP.');
             }
         }
     }

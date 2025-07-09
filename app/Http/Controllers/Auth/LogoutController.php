@@ -3,11 +3,13 @@
     namespace App\Http\Controllers\Auth;
 
     use App\Http\Controllers\Controller;
+    use App\Traits\ApiResponse;
     use Illuminate\Http\JsonResponse;
     use Illuminate\Support\Facades\Auth;
 
     class LogoutController extends Controller
     {
+        use ApiResponse;
         /**
          * تنفيذ عملية تسجيل الخروج
          *
@@ -23,15 +25,9 @@
                 /** @var \App\Models\User $user */
                 $user->tokens()->delete();
 
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'تم تسجيل الخروج بنجاح.',
-                ], 200);
+                return $this->successMessage('Successfully logged out.');
             }
 
-            return response()->json([
-                'status' => 'error',
-                'message' => 'لا يوجد مستخدم مصادق عليه.',
-            ], 401);
+            return $this->errorResponse('No authenticated user found.', 401);
         }
     }

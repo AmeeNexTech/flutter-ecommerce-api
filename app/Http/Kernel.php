@@ -31,6 +31,7 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             EnsureFrontendRequestsAreStateful::class,
+            \App\Http\Middleware\ApiResponseMiddleware::class,
         ],
     ];
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Traits\ApiResponse;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
+    use ApiResponse;
 
     /**
      * تسجيل دخول المستخدم باستخدام البريد الإلكتروني وكلمة المرور
@@ -24,19 +27,16 @@ class LoginController extends Controller
         $key = 'login:' . $request->email;
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
-            return response()->json([
-                'status' => 'error',
-                'message' => "You have exceeded the maximum number of login attempts. Please try again after $seconds seconds."
-            ], 429);
+            return $this->errorResponse(
+                "You have exceeded the maximum number of login attempts. Please try again after $seconds seconds.",
+                429
+            );
         }
 
         // التحقق من بيانات المستخدم
         if (!Auth::attempt($request->only('email', 'password'))) {
             RateLimiter::hit($key, 3600); // تسجيل محاولة فاشلة
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid login credentials.'
-            ], 401);
+            return $this->errorResponse('Invalid login credentials.', 401);
         }
 
         // الحصول على المستخدم
@@ -48,13 +48,9 @@ class LoginController extends Controller
         // تسجيل محاولة ناجحة وإعادة تعيين العداد
         RateLimiter::clear($key);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'successfully logged in.',
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ]
-        ], 200);
+        return $this->successResponse([
+            'user' => new UserResource($user),
+            'token' => $token
+        ], 'Successfully logged in.');
     }
 }

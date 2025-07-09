@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Api\HealthController;
 
   Route::prefix('auth')->group(function () {
       // مسارات إنشاء الحساب والتحقق
@@ -24,3 +25,7 @@ use App\Http\Controllers\User\UserController;
       // مسار حذف الحساب
       Route::post('/delete-account', [UserController::class, 'deleteAccount'])->middleware('auth:sanctum');
     });
+
+    // Health Check Routes
+    Route::get('/health', [HealthController::class, 'health']);
+    Route::get('/info', [HealthController::class, 'info']);
